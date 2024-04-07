@@ -36,6 +36,7 @@ public class Program
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Type checking has finished with Errors");
             Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(string.Join('\n', grammarListener.Errors));
             return;
         }
     }
