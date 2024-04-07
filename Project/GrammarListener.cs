@@ -119,12 +119,6 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         }
     }
 
-    public override void EnterExpr([NotNull] MyGrammarParser.ExprContext context)
-    {
-        base.EnterExpr(context);
-        ProcessExpr(context);
-    }
-
     private VarType ProcessExpr(MyGrammarParser.ExprContext expr)
     {
         if (expr.literal() is MyGrammarParser.LiteralContext literalContext)
@@ -196,7 +190,6 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
                 HasError = true;
                 return varType;
             }
-            return value;
         }
 
         return VarType.UNKNOWN;
