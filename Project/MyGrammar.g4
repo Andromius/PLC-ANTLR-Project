@@ -40,7 +40,7 @@ expr :
      | expr op expr
      | parenExpr 
      | unaryExpr
-     | assign;
+     | <assoc=right> assign;
 
 literal : INT | FLOAT | BOOL | STRING;
 
