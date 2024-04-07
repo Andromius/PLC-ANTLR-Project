@@ -33,11 +33,13 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         base.EnterBlockStmt(context);
         _variables.Push([]);
     }
+
     public override void ExitBlockStmt([NotNull] MyGrammarParser.BlockStmtContext context)
     {
         base.ExitBlockStmt(context);
         _variables.Pop();
     }
+
     public override void EnterVarDecl([NotNull] MyGrammarParser.VarDeclContext context)
     {
         base.EnterVarDecl(context);
