@@ -88,7 +88,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         
         VarType value = scope[variableIdentifier];
         VarType varType = ProcessExpr(context.expr());
-        if (value != varType || (value is VarType.FLOAT && varType is not (VarType.INT or VarType.FLOAT)))
+        if (value != varType && value is VarType.FLOAT && (varType is not (VarType.FLOAT or VarType.INT)))
         {
             Console.WriteLine($"Attempt to assign a variable of type {varType} to a variable of type {value}");
             HasError = true;
@@ -112,7 +112,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         else if(context.SUB() is not null)
         {
             VarType varType = ProcessExpr(context.expr());
-            if (varType is not VarType.INT or VarType.FLOAT)
+            if (varType is not (VarType.INT or VarType.FLOAT))
             {
                 Console.WriteLine($"Unary MINUS operator cannot be used with type {varType}");
                 HasError = true;
@@ -186,7 +186,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             
             VarType value = scope[idNode.GetText()];
             VarType varType = ProcessExpr(assignContext.expr());
-            if (value != varType || (value is VarType.FLOAT && varType is not (VarType.INT or VarType.FLOAT)))
+            if (value != varType && value is VarType.FLOAT && (varType is not (VarType.FLOAT or VarType.INT)))
             {
                 Console.WriteLine($"Attempt to assign variable of type {varType} to variable of type {value}");
                 HasError = true;
