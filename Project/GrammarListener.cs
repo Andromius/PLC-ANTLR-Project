@@ -57,7 +57,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             string id = identifier.ToString()!;
             if (_variables.Any(x => x.ContainsKey(id)))
             {
-                Console.WriteLine($"Variable with the identifier \"{id}\" has already been declared");
+                Console.WriteLine($"Variable with the identifier \u001b[96m\"{id}\"\u001b[0m has already been declared");
                 HasError = true;
                 continue;
             }
@@ -81,7 +81,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         var scope = _variables.SingleOrDefault(x => x.ContainsKey(variableIdentifier));
         if (scope is null)
         {
-            Console.WriteLine($"Attempt to assign value to an undeclared variable \"{variableIdentifier}\"");
+            Console.WriteLine($"Attempt to assign value to an undeclared variable \u001b[96m\"{variableIdentifier}\"\u001b[0m");
             HasError = true;
             return;
         }
@@ -90,7 +90,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         VarType varType = ProcessExpr(context.expr());
         if (value != varType && value is VarType.FLOAT && (varType is not (VarType.FLOAT or VarType.INT)))
         {
-            Console.WriteLine($"Attempt to assign a variable of type {varType} to a variable of type {value}");
+            Console.WriteLine($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
             HasError = true;
             return;
         }    
@@ -104,7 +104,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType varType = ProcessExpr(context.expr());
             if (varType is not VarType.BOOL)
             {
-                Console.WriteLine($"Logical operator NOT cannot be used with type {varType}");
+                Console.WriteLine($"Logical operator \u001b[96mNOT\u001b[0m cannot be used with type \u001b[96m{varType}\u001b[0m");
                 HasError = true;
                 return;
             } 
@@ -114,7 +114,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType varType = ProcessExpr(context.expr());
             if (varType is not (VarType.INT or VarType.FLOAT))
             {
-                Console.WriteLine($"Unary MINUS operator cannot be used with type {varType}");
+                Console.WriteLine($"Unary \u001b[96mMINUS\u001b[0m operator cannot be used with type \u001b[96m{varType}\u001b[0m");
                 HasError = true;
                 return;
             }
@@ -146,7 +146,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             //scope.TryGetValue(node.GetText(), out VarType value)
             if (scope is null)
             {
-                Console.WriteLine($"Variable {node.GetText()} has not been declared");
+                Console.WriteLine($"Variable \u001b[96m\"{node.GetText()}\"\u001b[0m has not been declared");
                 return VarType.UNKNOWN;
             }
 
@@ -160,7 +160,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             string op = GetOperator(opCtx);
             VarType result = ProcessBinaryOp(first, second, op);
             if (result == VarType.UNKNOWN)
-                Console.WriteLine($"Cannot use operator \"{op}\" with variables of type {first} and {second}");
+                Console.WriteLine($"Cannot use operator \u001b[96m\"{op}\"\u001b[0m with variables of type \u001b[96m{first}\u001b[0m and \u001b[96m{second}\u001b[0m");
             return result;
         }
         else if (expr.parenExpr() is MyGrammarParser.ParenExprContext parenExprContext)
@@ -176,7 +176,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType varType = ProcessExpr(unaryExprContext.expr());
             VarType result = ProcessUnaryOp(varType, op);
             if (result == VarType.UNKNOWN)
-                Console.WriteLine($"Cannot use operator \"{op}\" with variable of type {varType}");
+                Console.WriteLine($"Cannot use operator \u001b[96m\"{op}\"\u001b[0m with variable of type \u001b[96m{varType}\u001b[0m");
             return result;
         }
         else if (expr.assign() is MyGrammarParser.AssignContext assignContext)
@@ -185,7 +185,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             var scope = _variables.SingleOrDefault(x => x.ContainsKey(idNode.GetText()));
             if (scope is null)
             {
-                Console.WriteLine($"Variable {idNode.GetText()} has not been declared");
+                Console.WriteLine($"Variable \u001b[96m\"{idNode.GetText()}\"\u001b[0m has not been declared");
                 HasError = true;
                 return VarType.UNKNOWN;
             }
@@ -194,7 +194,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType varType = ProcessExpr(assignContext.expr());
             if (value != varType && value is VarType.FLOAT && (varType is not (VarType.FLOAT or VarType.INT)))
             {
-                Console.WriteLine($"Attempt to assign variable of type {varType} to variable of type {value}");
+                Console.WriteLine($"Attempt to assign variable of type \u001b[96m{varType}\u001b[0m to variable of type \u001b[96m{value}\u001b[0m");
                 HasError = true;
                 return varType;
             }
