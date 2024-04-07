@@ -30,5 +30,13 @@ public class Program
         ParseTreeWalker walker = new();
         GrammarListener grammarListener = new();
         walker.Walk(grammarListener, tree);
+
+        if (grammarListener.HasError)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Type checking has finished with Errors");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            return;
+        }
     }
 }

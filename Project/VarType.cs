@@ -10,5 +10,6 @@ public enum VarType
     INT,
     FLOAT,
     STRING,
-    BOOL
+    BOOL,
+    UNKNOWN
 }
