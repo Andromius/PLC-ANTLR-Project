@@ -107,12 +107,13 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         VarType varType = ProcessExpr(context.expr());
         if (value != varType)
         {
-            if (!(value is VarType.FLOAT && (varType is not (VarType.FLOAT or VarType.INT))))
+            if (value is VarType.FLOAT && varType is VarType.INT)
             {
-                Errors.Add($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
-                HasError = true;
                 return;
             }
+            Errors.Add($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
+            HasError = true;
+            return;
         }    
     }
 
@@ -214,13 +215,15 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType varType = ProcessExpr(assignContext.expr());
             if (value != varType)
             {
-                if (!(value is VarType.FLOAT && (varType is not (VarType.FLOAT or VarType.INT))))
+                if (value is VarType.FLOAT && varType is VarType.INT)
                 {
-                    Errors.Add($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
-                    HasError = true;
-                    return varType;
+                    return VarType.FLOAT;
                 }
+                Errors.Add($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
+                HasError = true;
+                return varType;
             }
+            return value;
         }
 
         return VarType.UNKNOWN;
