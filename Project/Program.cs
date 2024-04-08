@@ -58,10 +58,10 @@ public class Program
     public static void Main(string[] args)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        Run(["C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_1.txt",
-            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_2.txt",
-            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_3.txt",
-            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_err.txt",
-            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_for.txt"]);
+        Run(["test_1.txt",
+             "test_2.txt",
+             "test_3.txt",
+             "test_err.txt",
+             "test_for.txt"]);
     }
 }
