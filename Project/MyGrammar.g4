@@ -26,7 +26,8 @@ statement :
          | writeStmt SEMI
          | blockStmt
          | ifStmt
-         | whileStmt;
+         | whileStmt
+         | forStmt;
 
 emptyStmt : ;
 
@@ -91,3 +92,5 @@ ifStmt : 'if' '(' expr ')' statement ('else' statement)?;
 
 // While loop
 whileStmt : 'while' '(' expr ')' statement;
+
+forStmt : 'for' '(' expr ';' expr ';' expr ')' statement;  

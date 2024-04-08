@@ -90,6 +90,32 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         }
     }
 
+    public override void EnterForStmt([NotNull] MyGrammarParser.ForStmtContext context)
+    {
+        base.EnterForStmt(context);
+        VarType first = ProcessExpr(context.expr(0));
+        VarType second = ProcessExpr(context.expr(1));
+        VarType third = ProcessExpr(context.expr(2));
+
+        if (first is VarType.UNKNOWN)
+        {
+            Errors.Add("The first expression in a for statement must have a type but has type \u001b[96mUNKNOWN\u001b[0m");
+            HasError = true;
+        }
+
+        if (second is not VarType.BOOL)
+        {
+            Errors.Add("The second expression in a for statement must be of type \u001b[96mBOOL\u001b[0m");
+            HasError = true;
+        }
+
+        if (third is VarType.UNKNOWN)
+        {
+            Errors.Add("The first expression in a for statement must have a type but has type \u001b[96mUNKNOWN\u001b[0m");
+            HasError = true;
+        }
+    }
+
     public override void EnterAssign([NotNull] MyGrammarParser.AssignContext context)
     {
         base.EnterAssign(context);
