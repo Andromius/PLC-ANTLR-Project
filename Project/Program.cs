@@ -8,36 +8,60 @@ using MyGrammar;
 
 public class Program
 {
+    public static void Run(List<string> fileNames)
+    {
+        foreach (var fileName in fileNames)
+        {
+            Console.WriteLine("\u001b[93mParsing:\u001b[0m " + fileName);
+            var inputFile = new StreamReader(fileName);
+            AntlrInputStream input = new(inputFile);
+            MyGrammarLexer lexer = new(input);
+            CommonTokenStream tokens = new(lexer);
+            MyGrammarParser parser = new(tokens);
+
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new VerboseListener());
+
+            IParseTree tree = parser.program();
+
+            if (parser.NumberOfSyntaxErrors != 0)
+            {
+                Console.WriteLine();
+                continue;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Finished parsing {fileName} without issues");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            ParseTreeWalker walker = new();
+            GrammarListener grammarListener = new();
+            walker.Walk(grammarListener, tree);
+
+            if (grammarListener.HasError)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Type checking {fileName} has finished with Errors");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine(string.Join('\n', grammarListener.Errors));
+                Console.WriteLine();
+                continue;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Finished type checking {fileName} without issues");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine();
+        }
+    }
 
     public static void Main(string[] args)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        var fileName = "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_1.txt";
-        Console.WriteLine("Parsing: " + fileName);
-        var inputFile = new StreamReader(fileName);
-        AntlrInputStream input = new(inputFile);
-        MyGrammarLexer lexer = new(input);
-        CommonTokenStream tokens = new(lexer);
-        MyGrammarParser parser = new(tokens);
-
-        parser.RemoveErrorListeners();
-        parser.AddErrorListener(new VerboseListener());
-
-        IParseTree tree = parser.program();
-
-        if (parser.NumberOfSyntaxErrors != 0) return;
-
-        ParseTreeWalker walker = new();
-        GrammarListener grammarListener = new();
-        walker.Walk(grammarListener, tree);
-
-        if (grammarListener.HasError)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Type checking has finished with Errors");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine(string.Join('\n', grammarListener.Errors));
-            return;
-        }
+        Run(["C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_1.txt",
+            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_2.txt",
+            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_3.txt",
+            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_err.txt",
+            "C:\\Users\\marti\\Desktop\\PJP\\ANTLR\\Project\\Project\\test_for.txt"]);
     }
 }
