@@ -90,31 +90,31 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         }
     }
 
-    public override void EnterForStmt([NotNull] MyGrammarParser.ForStmtContext context)
-    {
-        base.EnterForStmt(context);
-        VarType first = ProcessExpr(context.expr(0));
-        VarType second = ProcessExpr(context.expr(1));
-        VarType third = ProcessExpr(context.expr(2));
+    //public override void EnterForStmt([NotNull] MyGrammarParser.ForStmtContext context)
+    //{
+    //    base.EnterForStmt(context);
+    //    VarType first = ProcessExpr(context.expr(0));
+    //    VarType second = ProcessExpr(context.expr(1));
+    //    VarType third = ProcessExpr(context.expr(2));
 
-        if (first is VarType.UNKNOWN)
-        {
-            Errors.Add("The first expression in a for statement must have a type but has type \u001b[96mUNKNOWN\u001b[0m");
-            HasError = true;
-        }
+    //    if (first is VarType.UNKNOWN)
+    //    {
+    //        Errors.Add("The first expression in a for statement must have a type but has type \u001b[96mUNKNOWN\u001b[0m");
+    //        HasError = true;
+    //    }
 
-        if (second is not VarType.BOOL)
-        {
-            Errors.Add("The second expression in a for statement must be of type \u001b[96mBOOL\u001b[0m");
-            HasError = true;
-        }
+    //    if (second is not VarType.BOOL)
+    //    {
+    //        Errors.Add("The second expression in a for statement must be of type \u001b[96mBOOL\u001b[0m");
+    //        HasError = true;
+    //    }
 
-        if (third is VarType.UNKNOWN)
-        {
-            Errors.Add("The first expression in a for statement must have a type but has type \u001b[96mUNKNOWN\u001b[0m");
-            HasError = true;
-        }
-    }
+    //    if (third is VarType.UNKNOWN)
+    //    {
+    //        Errors.Add("The first expression in a for statement must have a type but has type \u001b[96mUNKNOWN\u001b[0m");
+    //        HasError = true;
+    //    }
+    //}
 
     public override void EnterAssign([NotNull] MyGrammarParser.AssignContext context)
     {
@@ -203,8 +203,8 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         {
             VarType first = ProcessExpr(expr.expr(0));
             VarType second = ProcessExpr(expr.expr(1));
-            var opCtx = expr.op();
-            string op = GetOperator(opCtx);
+            var op = expr.op.Text;
+            //string op = GetOperator(opCtx);
             VarType result = ProcessBinaryOp(first, second, op);
             if (result == VarType.UNKNOWN)
                 Errors.Add($"Cannot use operator \u001b[96m\"{op}\"\u001b[0m with variables of type \u001b[96m{first}\u001b[0m and \u001b[96m{second}\u001b[0m");
@@ -305,38 +305,38 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         _ => VarType.UNKNOWN
     };
 
-    private static string GetOperator(MyGrammarParser.OpContext opContext)
-    {
-        if (opContext.ADD() is not null)
-            return opContext.ADD().GetText();
-        if (opContext.SUB() is not null)
-            return opContext.SUB().GetText();
-        if (opContext.MUL() is not null)
-            return opContext.MUL().GetText();
-        if (opContext.DIV() is not null)
-            return opContext.DIV().GetText();
-        if (opContext.MOD() is not null)
-            return opContext.MOD().GetText();
-        if (opContext.LT() is not null)
-            return opContext.LT().GetText();
-        if (opContext.GT() is not null)
-            return opContext.GT().GetText();
-        if (opContext.LE() is not null)
-            return opContext.LE().GetText();
-        if (opContext.GE() is not null)
-            return opContext.GE().GetText();
-        if (opContext.EQ() is not null)
-            return opContext.EQ().GetText();
-        if (opContext.NE() is not null)
-            return opContext.NE().GetText();
-        if (opContext.AND() is not null)
-            return opContext.AND().GetText();
-        if (opContext.OR() is not null)
-            return opContext.OR().GetText();
-        if (opContext.NOT() is not null)
-            return opContext.NOT().GetText();
-        if (opContext.DOT() is not null)
-            return opContext.DOT().GetText();
-        return "";
-    }
+    //private static string GetOperator(MyGrammarParser.OpContext opContext)
+    //{
+    //    if (opContext.ADD() is not null)
+    //        return opContext.ADD().GetText();
+    //    if (opContext.SUB() is not null)
+    //        return opContext.SUB().GetText();
+    //    if (opContext.MUL() is not null)
+    //        return opContext.MUL().GetText();
+    //    if (opContext.DIV() is not null)
+    //        return opContext.DIV().GetText();
+    //    if (opContext.MOD() is not null)
+    //        return opContext.MOD().GetText();
+    //    if (opContext.LT() is not null)
+    //        return opContext.LT().GetText();
+    //    if (opContext.GT() is not null)
+    //        return opContext.GT().GetText();
+    //    if (opContext.LE() is not null)
+    //        return opContext.LE().GetText();
+    //    if (opContext.GE() is not null)
+    //        return opContext.GE().GetText();
+    //    if (opContext.EQ() is not null)
+    //        return opContext.EQ().GetText();
+    //    if (opContext.NE() is not null)
+    //        return opContext.NE().GetText();
+    //    if (opContext.AND() is not null)
+    //        return opContext.AND().GetText();
+    //    if (opContext.OR() is not null)
+    //        return opContext.OR().GetText();
+    //    if (opContext.NOT() is not null)
+    //        return opContext.NOT().GetText();
+    //    if (opContext.DOT() is not null)
+    //        return opContext.DOT().GetText();
+    //    return "";
+    //}
 }

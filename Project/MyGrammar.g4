@@ -38,8 +38,14 @@ type : 'int' | 'float' | 'bool' | 'string';
 expr : 
       literal 
      | ID 
-     | expr op expr
      | parenExpr 
+     | expr op=(MUL|DIV) expr
+     | expr op=(ADD|SUB) expr
+     | expr op=MOD expr
+     | expr op=AND expr
+     | expr op=OR expr
+     | expr op=(LT|GT|EQ|NE) expr
+     | expr op=DOT expr
      | unaryExpr
      | <assoc=right> assign;
 
@@ -49,16 +55,10 @@ parenExpr : '(' expr ')';
 
 unaryExpr : SUB expr | NOT expr;
 
-op : ADD | SUB | MUL | DIV | MOD 
-   | LT | GT | LE | GE 
-   | EQ | NE 
-   | AND | OR 
-   | NOT | DOT;
-
-ADD : '+';
-SUB : '-';
 MUL : '*';
 DIV : '/';
+ADD : '+';
+SUB : '-';
 MOD : '%';
 
 LT : '<';
@@ -69,8 +69,8 @@ GE : '>=';
 EQ : '==';
 NE : '!=';
 
-AND : '&&';
 OR : '||';
+AND : '&&';
 
 NOT : '!';
 
