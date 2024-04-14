@@ -57,16 +57,19 @@ public class Program
             InstructionListener instructionListener = new();
             walker.Walk(instructionListener, tree);
             Console.WriteLine(string.Join('\n', instructionListener.Instructions));
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Finished creating instructions");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine();
         }
     }
 
     public static void Main(string[] args)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        Run(["test_2.txt"]);
-             //"test_2.txt",
-             //"test_3.txt",
-             //"test_err.txt",
-             //"test_for.txt"]);
+        Run(["test_1.txt",
+             "test_2.txt",
+             "test_3.txt",
+             "test_err.txt"]);
     }
 }

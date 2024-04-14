@@ -117,6 +117,7 @@ public class InstructionListener : MyGrammarBaseListener
         Instructions.Add($"label {_labelCount}");
         _labelCount++;
     }
+
     public override void EnterWriteStmt([NotNull] MyGrammarParser.WriteStmtContext context)
     {
         var expressions = context.expr();
@@ -154,12 +155,6 @@ public class InstructionListener : MyGrammarBaseListener
             Instructions.Add($"push {type} {_defaults[type].Value}");
             Instructions.Add($"save {node.GetText()}");
         }
-    }
-
-    public override void ExitExpr([NotNull] MyGrammarParser.ExprContext context)
-    {
-        //if (context.Parent is MyGrammarParser.ExprContext)
-        //    Console.WriteLine(context.GetText());
     }
 
     private string HandleExpr(MyGrammarParser.ExprContext expr)
@@ -208,10 +203,10 @@ public class InstructionListener : MyGrammarBaseListener
         }
         else if (expr.assign() is MyGrammarParser.AssignContext assignContext)
         {
-            HandleExpr(assignContext.expr());
+            string type = HandleExpr(assignContext.expr());
             
             string varName = assignContext.ID().GetText();
-            if (_variables.Single(x => x.Any(v => v.Key == varName))[varName] == 'F')
+            if (_variables.Single(x => x.Any(v => v.Key == varName))[varName] == 'F' && type == "INT")
                 Instructions.Add("itof");
             Instructions.Add($"save {varName}");
             Instructions.Add($"load {varName}");
@@ -229,10 +224,5 @@ public class InstructionListener : MyGrammarBaseListener
             HandleExpr(parenExprContext.expr());
         }
         return "";
-    }
-
-    public void HandleVarDecl(MyGrammarParser.VarDeclContext context)
-    {
-
     }
 }
