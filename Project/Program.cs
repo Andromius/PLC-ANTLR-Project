@@ -52,16 +52,21 @@ public class Program
             Console.WriteLine($"Finished type checking {fileName} without issues");
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine();
+
+            walker = new();
+            InstructionListener instructionListener = new();
+            walker.Walk(instructionListener, tree);
+            Console.WriteLine(string.Join('\n', instructionListener.Instructions));
         }
     }
 
     public static void Main(string[] args)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        Run(["test_1.txt",
-             "test_2.txt",
-             "test_3.txt",
-             "test_err.txt",
-             "test_for.txt"]);
+        Run(["test_2.txt"]);
+             //"test_2.txt",
+             //"test_3.txt",
+             //"test_err.txt",
+             //"test_for.txt"]);
     }
 }
