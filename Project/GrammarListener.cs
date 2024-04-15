@@ -14,6 +14,7 @@ namespace Project;
 public class GrammarListener(bool printRules = false) : MyGrammarBaseListener 
 {
     private readonly Stack<Dictionary<string, VarType>> _variables = new();
+    public ParseTreeProperty<VarType> ParseTreeProperty { get; private set; } = new();
     public bool HasError { get; private set; } = false;
     public bool PrintRules { get; set; } = printRules;
     public HashSet<string> Errors { get; } = [];
@@ -87,6 +88,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
                 VarType.STRING => currentType,
                 VarType.BOOL => currentType
             };
+            ParseTreeProperty.Put(context, scope[id]);
         }
     }
 
@@ -135,6 +137,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         {
             if (value is VarType.FLOAT && varType is VarType.INT)
             {
+                ParseTreeProperty.Put(context, VarType.FLOAT);
                 return;
             }
             Errors.Add($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
@@ -149,6 +152,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         if(context.NOT() is not null)
         {
             VarType varType = ProcessExpr(context.expr());
+            ParseTreeProperty.Put(context, varType);
             if (varType is not VarType.BOOL)
             {
                 Errors.Add($"Logical operator \u001b[96mNOT\u001b[0m cannot be used with type \u001b[96m{varType}\u001b[0m");
@@ -159,6 +163,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         else if(context.SUB() is not null)
         {
             VarType varType = ProcessExpr(context.expr());
+            ParseTreeProperty.Put(context, varType);
             if (varType is not (VarType.INT or VarType.FLOAT))
             {
                 Errors.Add($"Unary \u001b[96mMINUS\u001b[0m operator cannot be used with type \u001b[96m{varType}\u001b[0m");
@@ -179,13 +184,25 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
         if (expr.literal() is MyGrammarParser.LiteralContext literalContext)
         {
             if (literalContext.BOOL() is not null)
+            {
+                ParseTreeProperty.Put(expr, VarType.BOOL);
                 return VarType.BOOL;
+            }
             if (literalContext.INT() is not null)
+            {
+                ParseTreeProperty.Put(expr, VarType.INT);
                 return VarType.INT;
+            }
             if (literalContext.FLOAT() is not null)
+            {
+                ParseTreeProperty.Put(expr, VarType.FLOAT);
                 return VarType.FLOAT;
+            }
             if (literalContext.STRING() is not null)
+            {
+                ParseTreeProperty.Put(expr, VarType.STRING);
                 return VarType.STRING;
+            }
         }
         else if (expr.ID() is ITerminalNode node)
         {
@@ -196,7 +213,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
                 Errors.Add($"Variable \u001b[96m\"{node.GetText()}\"\u001b[0m has not been declared");
                 return VarType.UNKNOWN;
             }
-
+            ParseTreeProperty.Put(expr, scope[node.GetText()]);
             return scope[node.GetText()];
         }
         else if (expr.ChildCount == 3)
@@ -208,6 +225,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType result = ProcessBinaryOp(first, second, op);
             if (result == VarType.UNKNOWN)
                 Errors.Add($"Cannot use operator \u001b[96m\"{op}\"\u001b[0m with variables of type \u001b[96m{first}\u001b[0m and \u001b[96m{second}\u001b[0m");
+            ParseTreeProperty.Put(expr, result);
             return result;
         }
         else if (expr.parenExpr() is MyGrammarParser.ParenExprContext parenExprContext)
@@ -224,6 +242,7 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             VarType result = ProcessUnaryOp(varType, op);
             if (result == VarType.UNKNOWN)
                 Errors.Add($"Cannot use operator \u001b[96m\"{op}\"\u001b[0m with variable of type \u001b[96m{varType}\u001b[0m");
+            ParseTreeProperty.Put(expr, result);
             return result;
         }
         else if (expr.assign() is MyGrammarParser.AssignContext assignContext)
@@ -243,12 +262,14 @@ public class GrammarListener(bool printRules = false) : MyGrammarBaseListener
             {
                 if (value is VarType.FLOAT && varType is VarType.INT)
                 {
+                    ParseTreeProperty.Put(assignContext, VarType.FLOAT);
                     return VarType.FLOAT;
                 }
                 Errors.Add($"Attempt to assign a variable of type \u001b[96m{varType}\u001b[0m to a variable of type \u001b[96m{value}\u001b[0m");
                 HasError = true;
                 return varType;
             }
+            ParseTreeProperty.Put(expr, value);
             return value;
         }
 
