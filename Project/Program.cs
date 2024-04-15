@@ -51,14 +51,30 @@ public class Program
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Finished type checking {fileName} without issues");
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine();
 
             walker = new();
-            InstructionListener instructionListener = new();
+            InstructionListener instructionListener = new(grammarListener.ParseTreeProperty);
             walker.Walk(instructionListener, tree);
-            Console.WriteLine(string.Join('\n', instructionListener.Instructions));
+
+            using (var fileStream = File.Create($"{fileName.Split('.')[0]}-out.txt"))
+            {
+                using var streamWriter = new StreamWriter(fileStream);
+                streamWriter.Write(string.Join('\n', instructionListener.Instructions));
+            }
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Finished creating instructions");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Interpreter started");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine();
+
+            Interpreter interpreter = new($"{fileName.Split('.')[0]}-out.txt");
+            interpreter.Interpret();
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Interpreting finished");
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine();
         }
@@ -67,9 +83,7 @@ public class Program
     public static void Main(string[] args)
     {
         Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-        Run(["test_1.txt",
-             "test_2.txt",
-             "test_3.txt",
-             "test_err.txt"]);
+        Run(["test_1.txt", "test_2.txt", "test_3.txt", "test_typed_ops.txt"]);
+        //,"test_2.txt","test_3.txt","test_typed_ops.txt"
     }
 }
